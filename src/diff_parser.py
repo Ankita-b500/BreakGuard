@@ -31,6 +31,28 @@ class DiffParser:
         tree = self.parser.parse(source.encode("utf-8"))
         return tree
 
+    def get_functions(self, tree):
+        """
+        Return all function names from a parsed Python AST.
+        """
+
+        functions = []
+
+        def walk(node):
+            if node.type == "function_definition":
+
+                for child in node.children:
+                    if child.type == "identifier":
+                        functions.append(child.text.decode("utf-8"))
+                        break
+
+            for child in node.children:
+                walk(child)
+
+        walk(tree.root_node)
+
+        return functions
+
 
 if __name__ == "__main__":
     parser = DiffParser()
@@ -39,4 +61,9 @@ if __name__ == "__main__":
     tree = parser.parse_file("sample.py")
 
     print("✅ Python file parsed successfully!")
-    print(tree.root_node)
+    functions = parser.get_functions(tree)
+
+    print("\nFunctions Found:")
+
+    for func in functions:
+        print(f"- {func}")
