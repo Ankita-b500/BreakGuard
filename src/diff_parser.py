@@ -53,6 +53,28 @@ class DiffParser:
 
         return functions
 
+    def get_classes(self, tree):
+        """
+        Return all class names from a parsed Python AST.
+        """
+
+        classes = []
+
+        def walk(node):
+            if node.type == "class_definition":
+
+               for child in node.children:
+                   if child.type == "identifier":
+                       classes.append(child.text.decode("utf-8"))
+                       break
+
+            for child in node.children:
+                walk(child)
+
+        walk(tree.root_node)
+
+        return classes
+
 
 if __name__ == "__main__":
     parser = DiffParser()
@@ -62,8 +84,12 @@ if __name__ == "__main__":
 
     print("✅ Python file parsed successfully!")
     functions = parser.get_functions(tree)
-
+    classes = parser.get_classes(tree)
     print("\nFunctions Found:")
 
     for func in functions:
         print(f"- {func}")
+    print("\nClasses Found:")
+
+    for cls in classes:
+        print(f"- {cls}")
