@@ -33,7 +33,7 @@ class DiffParser:
 
     def get_functions(self, tree):
         """
-        Return all function names from a parsed Python AST.
+        Return all functions with their names and parameter lists.
         """
 
         functions = []
@@ -41,10 +41,21 @@ class DiffParser:
         def walk(node):
             if node.type == "function_definition":
 
+                function_name = None
+                parameters = ""
+
                 for child in node.children:
+
                     if child.type == "identifier":
-                        functions.append(child.text.decode("utf-8"))
-                        break
+                        function_name = child.text.decode("utf-8")
+
+                    elif child.type == "parameters":
+                        parameters = child.text.decode("utf-8")
+    
+                functions.append({
+                    "name": function_name,
+                    "parameters": parameters
+                })
 
             for child in node.children:
                 walk(child)
@@ -88,8 +99,10 @@ if __name__ == "__main__":
     print("\nFunctions Found:")
 
     for func in functions:
-        print(f"- {func}")
-    print("\nClasses Found:")
+        print(f"Name: {func['name']}")
+        print(f"Parameters: {func['parameters']}")
+        print()
+        print("\nClasses Found:")
 
     for cls in classes:
         print(f"- {cls}")
