@@ -14,6 +14,11 @@ BreakGuard bridges this gap by analyzing source code changes and estimating thei
 
 ---
 
+## 🏗️ Architecture
+
+The following diagram shows how BreakGuard analyzes a Pull Request, identifies impacted code, evaluates risk, and posts an automated report back to GitHub.
+![BreakGuard Architecture](docs/architecture.png)
+
 ## ❓ Problem Statement
 
 When developers modify or remove functions, classes, or APIs, the changes may unintentionally affect multiple parts of the application.
@@ -56,6 +61,27 @@ BreakGuard performs static code analysis on Pull Requests to:
 
 ---
 
+## 🔄 Workflow
+
+```text
+GitHub Pull Request
+        │
+        ▼
+Diff Parser
+        │
+        ▼
+Call Finder
+        │
+        ▼
+Risk Scorer
+        │
+        ▼
+Reporter
+        │
+        ▼
+GitHub PR Comment
+```
+
 ## 📁 Project Structure
 
 ```text
@@ -63,21 +89,27 @@ BreakGuard/
 │
 ├── .github/
 │   └── workflows/
+│       └── test.yml
+│
+├── docs/
+│   ├── architecture.md
+│   ├── architecture.png
+│   └── validation.md
 │
 ├── src/
 │   ├── main.py
 │   ├── diff_parser.py
 │   ├── call_finder.py
+│   ├── github_client.py
+│   ├── reporter.py
 │   ├── risk_scorer.py
-│   ├── report_generator.py
-│   ├── models.py
-│   ├── config.py
-│   ├── logger.py
-│   └── utils.py
+│   └── models.py
 │
 ├── tests/
-│
-├── sample_repo/
+│   ├── sample_repo/
+│   ├── test_diff_parser.py
+│   ├── test_call_finder.py
+│   └── test_risk_scorer.py
 │
 ├── Dockerfile
 ├── action.yml
@@ -88,21 +120,22 @@ BreakGuard/
 ---
 
 ## ⚙️ Installation
+```
 
-Clone the repository
+### Clone the repository
 
 ```bash
 git clone https://github.com/Ankita-b500/BreakGuard.git
 cd BreakGuard
 ```
 
-Create a virtual environment
+### Create a virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate the virtual environment
+### Activate the virtual environment
 
 ### Windows
 
@@ -116,12 +149,17 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-Install dependencies
+### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
+## 🧪 Running Tests
 
+Run all tests using:
+
+```bash
+pytest
 ---
 
 ## ▶️ Usage
